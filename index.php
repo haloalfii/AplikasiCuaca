@@ -35,6 +35,7 @@ include "head.php";
             <div class="resume-section-content">
                 <div class="container p-3 my-3 text-center">
                     <div class="alert alert-primary" role="alert" id="sc"></div>
+                    <h1>Cuaca Saat ini</h1>
                     <h2>Input kan nama <span class="text-primary">kota</span> anda</h2>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="weather" aria-label="Example text with button addon" aria-describedby="button-addon1">
@@ -54,6 +55,29 @@ include "head.php";
             </div>
         </section>
         <hr class="m-0" />
+        <section class="resume-section" id="weekly">
+            <div class="resume-section-content">
+                <div class="container p-3 my-3 text-center">
+                    <div class="alert alert-primary" role="alert" id="sc"></div>
+                    <h1>Cuaca Minggu ini</h1>
+                    <h2>Input kan nama <span class="text-primary">kota</span> anda</h2>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="weeklyweather" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <button type="submit" class="btn btn-primary" type="button" id="weeksend">Kirim</button>
+                    </div>
+
+                    <p id="weeklocation" class="display-4"></p>
+                    <p id="weektemp" class="display-4"></p>
+                    <img height="200" />
+                    <h3></h3>
+                    <p>
+                        <span id="weekmin"></span><span id="weekmax"></span>
+                    <div class="alert alert-danger" role="alert" id="weeksd"></div>
+                    </p>
+                </div>
+
+            </div>
+        </section>
     </div>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -96,6 +120,44 @@ include "head.php";
                 error: function() {
                     $("#sc").text("Cuaca: " + weather + " Tidak Berhasil ditemukan");
                     $("#sc").show();
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    api = 'https://api.openweathermap.org/data/2.5/';
+    key = 'c0bb134f4f5de9db1fa5355e31ad892c';
+
+    $(document).ready(function() {
+        $("#weeksd").text("Data Kosong");
+        $("#weeksd").show();
+        $("#weeksc").hide();
+        $("#weeksend").click(function() {
+            let weeklyweather = $("#weeklyweather").val();
+            $.ajax({
+                url: api + 'forecast?q=' + weeklyweather + '&appid=' + key + '&units=metric',
+                success: function(res) {
+                    // console.log(JSON.stringify(res));
+                    let temp = res.main.temp;
+
+                    $('#weeklocation').html(weeklyweather);
+                    $('#weektemp').html(res.main.temp + '&deg;C');
+                    $('#weekmin').html(res.main.temp_min + '&deg;C <strong>Min</strong>');
+                    $('#weekmax').html(res.main.temp_max + '&deg;C <strong>Max</strong>');
+                    let icon = res.weather[0].icon;
+                    $('img').attr('src', 'http://openweathermap.org/img/wn/' + icon + '@2x.png');
+                    $('h3').text(res.weather[0].main + ' - ' + res.weather[0].description);
+
+                    $("#weeksc").text("Cuaca: " + weather + " Berhasil ditemukan");
+                    $("#weeksc").show();
+
+                    $("#weeksd").hide();
+                },
+                error: function() {
+                    $("#weeksc").text("Cuaca: " + weather + " Tidak Berhasil ditemukan");
+                    $("#weeksc").show();
                 }
             });
         });
